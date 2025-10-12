@@ -1,39 +1,51 @@
 local p = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui", p:WaitForChild("PlayerGui"))
-gui.Name = "BotaoDanoBuff"
+gui.Name = "PainelKillsFake"
 
-local botao = Instance.new("TextButton", gui)
-botao.Size = UDim2.new(0, 250, 0, 40)
-botao.Position = UDim2.new(0.5, -125, 0.85, 0)
-botao.Text = "Dano x20"
-botao.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-botao.TextColor3 = Color3.fromRGB(255, 255, 255)
-botao.Font = Enum.Font.Fantasy
-botao.TextSize = 18
-botao.Active = true
-botao.Draggable = true
+-- Contador de kills
+local contador = Instance.new("TextLabel", gui)
+contador.Size = UDim2.new(0, 200, 0, 40)
+contador.Position = UDim2.new(0.5, -100, 0.1, 0)
+contador.Text = "Kills: 0"
+contador.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+contador.TextColor3 = Color3.fromRGB(255, 215, 0)
+contador.Font = Enum.Font.Fantasy
+contador.TextSize = 22
 
-local ativo = false
+local kills = 0
+local coroa = nil
 
-botao.MouseButton1Click:Connect(function()
-	ativo = not ativo
-	if ativo then
-		botao.Text = "Dano x20 ATIVADO"
-		botao.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+-- Função para criar coroa flutuante
+local function criarCoroa()
+	if coroa then return end
+	coroa = Instance.new("BillboardGui", p.Character.Head)
+	coroa.Size = UDim2.new(0, 100, 0, 100)
+	coroa.StudsOffset = Vector3.new(0, 2.5, 0)
+	coroa.AlwaysOnTop = true
 
-		-- Intercepta RemoteEvent de dano
-		for _, obj in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
-			if obj:IsA("RemoteEvent") and obj.Name:lower():find("dano") then
-				local original = obj.FireServer
-				obj.FireServer = function(self, alvo, dano)
-					print("Dano interceptado: multiplicando por 20")
-					return original(self, alvo, dano * 20)
+	local img = Instance.new("ImageLabel", coroa)
+	img.Size = UDim2.new(1, 0, 1, 0)
+	img.BackgroundTransparency = 1
+	img.Image = "rbxassetid://7483871524" -- Ícone de coroa dourada
+end
+
+-- Simulador de kills multiplicadas
+game:GetService("RunService").Heartbeat:Connect(function()
+	for _, jogador in pairs(game.Players:GetPlayers()) do
+		if jogador ~= p then
+			local char = jogador.Character
+			if char then
+				local h = char:FindFirstChildOfClass("Humanoid")
+				if h and h.Health < h.MaxHealth and h.Health > 0 then
+					kills += 10 -- Cada hit conta como 10 kills
+					contador.Text = "Kills: " .. kills
+					wait(0.2)
+
+					if kills >= 10 and not coroa then
+						criarCoroa()
+					end
 				end
 			end
 		end
-
-	else
-		botao.Text = "Dano x20"
-		botao.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 	end
 end)
