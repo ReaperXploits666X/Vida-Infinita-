@@ -4,18 +4,34 @@ local function ativarVisualRei()
 	local char = p.Character or p.CharacterAdded:Wait()
 	local head = char:WaitForChild("Head")
 
-	-- 👑 COROA + CONTADOR
+	-- 👑 COROA 3D FÍSICA
+	local coroa = Instance.new("Part")
+	coroa.Name = "CoroaRei"
+	coroa.Size = Vector3.new(1.5, 1, 1.5)
+	coroa.Anchored = false
+	coroa.CanCollide = false
+	coroa.Shape = Enum.PartType.Ball
+	coroa.Material = Enum.Material.Neon
+	coroa.BrickColor = BrickColor.new("Bright yellow")
+	coroa.Position = head.Position + Vector3.new(0, 2.5, 0)
+	coroa.Parent = char
+
+	local weld = Instance.new("WeldConstraint", coroa)
+	weld.Part0 = coroa
+	weld.Part1 = head
+
+	-- 💬 CONTADOR DE KILLS VISUAL
 	local gui = Instance.new("BillboardGui", head)
-	gui.Name = "CoroaContador"
+	gui.Name = "ContadorKills"
 	gui.Size = UDim2.new(0, 120, 0, 50)
-	gui.StudsOffset = Vector3.new(0, 3.5, 0)
+	gui.StudsOffset = Vector3.new(0, 4, 0)
 	gui.AlwaysOnTop = true
 
-	local coroa = Instance.new("ImageLabel", gui)
-	coroa.Size = UDim2.new(0, 40, 1, 0)
-	coroa.Position = UDim2.new(0, 0, 0, 0)
-	coroa.BackgroundTransparency = 1
-	coroa.Image = "rbxassetid://7483871524" -- Ícone de coroa dourada
+	local coroaIcone = Instance.new("ImageLabel", gui)
+	coroaIcone.Size = UDim2.new(0, 40, 1, 0)
+	coroaIcone.Position = UDim2.new(0, 0, 0, 0)
+	coroaIcone.BackgroundTransparency = 1
+	coroaIcone.Image = "rbxassetid://7483871524"
 
 	local contador = Instance.new("TextLabel", gui)
 	contador.Size = UDim2.new(0, 80, 1, 0)
@@ -29,11 +45,11 @@ local function ativarVisualRei()
 	local kills = 0
 	local mortos = {}
 
-	-- ⚡ CONTORNO AMARELO COM RAIO
+	-- ⚡ CONTORNO AMARELO COM RAIO E BRILHO
 	for _, parte in pairs(char:GetChildren()) do
 		if parte:IsA("BasePart") then
 			local aura = Instance.new("ParticleEmitter", parte)
-			aura.Texture = "rbxassetid://243098098" -- textura de brilho
+			aura.Texture = "rbxassetid://243098098"
 			aura.Color = ColorSequence.new(Color3.new(1, 1, 0))
 			aura.LightEmission = 1
 			aura.Size = NumberSequence.new(0.6)
@@ -42,7 +58,7 @@ local function ativarVisualRei()
 			aura.LockedToPart = true
 
 			local raio = Instance.new("ParticleEmitter", parte)
-			raio.Texture = "rbxassetid://5695074144" -- textura de raio
+			raio.Texture = "rbxassetid://5695074144"
 			raio.Color = ColorSequence.new(Color3.new(1, 1, 0))
 			raio.LightEmission = 1
 			raio.Size = NumberSequence.new(0.4)
