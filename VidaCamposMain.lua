@@ -1,6 +1,6 @@
 local p = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui", p:WaitForChild("PlayerGui"))
-gui.Name = "BotaoCuraContinua"
+gui.Name = "BotaoCuraToggle"
 
 local botao = Instance.new("TextButton", gui)
 botao.Size = UDim2.new(0, 250, 0, 40)
