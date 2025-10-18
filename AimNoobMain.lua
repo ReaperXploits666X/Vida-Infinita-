@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local lp = Players.LocalPlayer
 local mouse = lp:GetMouse()
-local camera = workspace.CurrentCamera
+local camera = workspace.CurrentCamer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ConnoisseurCreations/KavoUI/main/source.lua"))()
 local Window = Library.CreateLib("VoidReaper Hub V1.0 Beta", "DarkTheme")
