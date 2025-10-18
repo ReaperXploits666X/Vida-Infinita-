@@ -37,7 +37,7 @@ RunService.RenderStepped:Connect(function()
     button.TextColor3 = rgb
 end)
 
--- Aim inteligente
+-- Aim inteligente com grude total
 local aimEnabled = false
 local lockedTarget = nil
 
@@ -62,7 +62,7 @@ RunService.RenderStepped:Connect(function()
             lockedTarget = getTargetInSight()
         end
         if lockedTarget then
-            camera.CFrame = CFrame.new(camera.CFrame.Position, lockedTarget.Position)
+            camera.CFrame = CFrame.lookAt(camera.CFrame.Position, lockedTarget.Position)
         end
     else
         lockedTarget = nil
