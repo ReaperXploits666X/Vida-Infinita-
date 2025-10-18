@@ -4,28 +4,36 @@ local lp = Players.LocalPlayer
 local mouse = lp:GetMouse()
 local camera = workspace.CurrentCamera
 
--- Interface personalizada
+-- GUI personalizada
 local ScreenGui = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
 ScreenGui.Name = "VoidReaperAimUI"
 ScreenGui.ResetOnSpawn = false
 
-local button = Instance.new("TextButton", ScreenGui)
-button.Size = UDim2.new(0, 180, 0, 50)
-button.Position = UDim2.new(0.5, -90, 0.9, -25)
+local buttonFrame = Instance.new("Frame", ScreenGui)
+buttonFrame.Size = UDim2.new(0, 180, 0, 50)
+buttonFrame.Position = UDim2.new(0.5, -90, 0.9, -25)
+buttonFrame.BackgroundTransparency = 0.5
+buttonFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+buttonFrame.BorderSizePixel = 2
+buttonFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+buttonFrame.Active = true
+buttonFrame.Draggable = true
+
+local button = Instance.new("TextButton", buttonFrame)
+button.Size = UDim2.new(1, 0, 1, 0)
 button.BackgroundTransparency = 1
 button.Text = "AIM NOOB [OFF]"
 button.TextColor3 = Color3.fromRGB(255, 0, 0)
 button.Font = Enum.Font.GothamBold
 button.TextSize = 20
-button.BorderSizePixel = 2
-button.BorderColor3 = Color3.fromRGB(255, 0, 0)
+button.AutoButtonColor = false
 
 -- Efeito RGB pulsante
 local hue = 0
 RunService.RenderStepped:Connect(function()
     hue = (hue + 0.01) % 1
     local rgb = Color3.fromHSV(hue, 1, 1)
-    button.BorderColor3 = rgb
+    buttonFrame.BorderColor3 = rgb
     button.TextColor3 = rgb
 end)
 
@@ -39,7 +47,7 @@ local function getTargetInSight()
             local pos, onScreen = camera:WorldToViewportPoint(player.Character.HumanoidRootPart.Position)
             if onScreen then
                 local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
-                if dist < 100 then -- FOV de 100 pixels
+                if dist < 100 then
                     return player.Character.HumanoidRootPart
                 end
             end
