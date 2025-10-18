@@ -1,21 +1,17 @@
--- VoidReaper AimLock V1.0
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local lp = Players.LocalPlayer
 local mouse = lp:GetMouse()
 local camera = workspace.CurrentCamera
 
--- Interface simples
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ConnoisseurCreations/KavoUI/main/source.lua"))()
 local Window = Library.CreateLib("VoidReaper Hub V1.0 Beta", "DarkTheme")
-local AimTab = Window:NewTab("AimLock")
+local AimTab = Window:NewTab("Campos de Batalha")
 local AimSection = AimTab:NewSection("AIM NOOB")
 
--- Estado do AimLock
 local aimEnabled = false
-local button
+local aimButton
 
--- Função para encontrar o inimigo mais próximo
 local function getClosestTarget()
     local closest, distance = nil, math.huge
     for _, player in pairs(Players:GetPlayers()) do
@@ -31,7 +27,6 @@ local function getClosestTarget()
     return closest
 end
 
--- Loop de travamento de mira
 RunService.RenderStepped:Connect(function()
     if aimEnabled then
         local target = getClosestTarget()
@@ -41,8 +36,7 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Botão de ativar/desativar
-button = AimSection:NewButton("AIM NOOB [OFF]", "Ativa/desativa aimlock", function()
+aimButton = AimSection:NewButton("AIM NOOB [OFF]", "Ativa/desativa mira colada", function()
     aimEnabled = not aimEnabled
-    button:UpdateButton("AIM NOOB [" .. (aimEnabled and "ON" or "OFF") .. "]")
+    aimButton:UpdateButton("AIM NOOB [" .. (aimEnabled and "ON" or "OFF") .. "]")
 end)
