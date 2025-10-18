@@ -2,41 +2,67 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local lp = Players.LocalPlayer
 local mouse = lp:GetMouse()
-local camera = workspace.CurrentCamer
+local camera = workspace.CurrentCamera
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ConnoisseurCreations/KavoUI/main/source.lua"))()
-local Window = Library.CreateLib("VoidReaper Hub V1.0 Beta", "DarkTheme")
-local AimTab = Window:NewTab("Campos de Batalha")
-local AimSection = AimTab:NewSection("AIM NOOB")
+-- Interface personalizada
+local ScreenGui = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
+ScreenGui.Name = "VoidReaperAimUI"
+ScreenGui.ResetOnSpawn = false
 
+local button = Instance.new("TextButton", ScreenGui)
+button.Size = UDim2.new(0, 180, 0, 50)
+button.Position = UDim2.new(0.5, -90, 0.9, -25)
+button.BackgroundTransparency = 1
+button.Text = "AIM NOOB [OFF]"
+button.TextColor3 = Color3.fromRGB(255, 0, 0)
+button.Font = Enum.Font.GothamBold
+button.TextSize = 20
+button.BorderSizePixel = 2
+button.BorderColor3 = Color3.fromRGB(255, 0, 0)
+
+-- Efeito RGB pulsante
+local hue = 0
+RunService.RenderStepped:Connect(function()
+    hue = (hue + 0.01) % 1
+    local rgb = Color3.fromHSV(hue, 1, 1)
+    button.BorderColor3 = rgb
+    button.TextColor3 = rgb
+end)
+
+-- Aim inteligente
 local aimEnabled = false
-local aimButton
+local lockedTarget = nil
 
-local function getClosestTarget()
-    local closest, distance = nil, math.huge
+local function getTargetInSight()
     for _, player in pairs(Players:GetPlayers()) do
         if player ~= lp and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local pos = camera:WorldToViewportPoint(player.Character.HumanoidRootPart.Position)
-            local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
-            if dist < distance then
-                closest = player.Character.HumanoidRootPart
-                distance = dist
+            local pos, onScreen = camera:WorldToViewportPoint(player.Character.HumanoidRootPart.Position)
+            if onScreen then
+                local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
+                if dist < 100 then -- FOV de 100 pixels
+                    return player.Character.HumanoidRootPart
+                end
             end
         end
     end
-    return closest
+    return nil
 end
 
 RunService.RenderStepped:Connect(function()
     if aimEnabled then
-        local target = getClosestTarget()
-        if target then
-            camera.CFrame = CFrame.new(camera.CFrame.Position, target.Position)
+        if not lockedTarget then
+            lockedTarget = getTargetInSight()
         end
+        if lockedTarget then
+            camera.CFrame = CFrame.new(camera.CFrame.Position, lockedTarget.Position)
+        end
+    else
+        lockedTarget = nil
     end
 end)
 
-aimButton = AimSection:NewButton("AIM NOOB [OFF]", "Ativa/desativa mira colada", function()
+-- Toggle do botão
+button.MouseButton1Click:Connect(function()
     aimEnabled = not aimEnabled
-    aimButton:UpdateButton("AIM NOOB [" .. (aimEnabled and "ON" or "OFF") .. "]")
+    button.Text = "AIM NOOB [" .. (aimEnabled and "ON" or "OFF") .. "]"
 end)
