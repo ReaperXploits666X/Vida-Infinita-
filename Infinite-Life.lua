@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/ReaperXploits666X/Infinite-Life.lua/main/Infinite-LifeMain.lua", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ReaperXploits666X/InfiniteLife.lua/main/InfiniteLifeMain.lua", true))()
