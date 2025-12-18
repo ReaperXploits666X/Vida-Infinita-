@@ -1,75 +1,43 @@
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local lp = Players.LocalPlayer
-local mouse = lp:GetMouse()
-local camera = workspace.CurrentCamera
+local button = script.Parent
+local player = game.Players.LocalPlayer
+local dragging = false
+local offset = Vector2.new()
 
--- GUI personalizada com botão móvel
-local gui = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
-gui.Name = "VoidReaperAimUI"
-gui.ResetOnSpawn = false
-
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 180, 0, 50)
-frame.Position = UDim2.new(0.5, -90, 0.9, -25)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-frame.BackgroundTransparency = 0.5
-frame.BorderSizePixel = 2
-frame.Active = true
-frame.Draggable = true
-
-local button = Instance.new("TextButton", frame)
-button.Size = UDim2.new(1, 0, 1, 0)
-button.BackgroundTransparency = 1
-button.Text = "AIM NOOB [OFF]"
-button.TextColor3 = Color3.fromRGB(255, 0, 0)
+-- Estilo do botão
+button.Text = "Regenerar Vida"
+button.Size = UDim2.new(0, 160, 0, 40)
+button.Position = UDim2.new(0, 100, 0, 100)
+button.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+button.TextColor3 = Color3.new(1, 1, 1)
 button.Font = Enum.Font.GothamBold
-button.TextSize = 20
-button.AutoButtonColor = false
+button.TextSize = 18
+button.Active = true
+button.Draggable = false -- vamos usar nosso próprio sistema de arrastar
 
--- Efeito RGB pulsante
-local hue = 0
-RunService.RenderStepped:Connect(function()
-    hue = (hue + 0.01) % 1
-    local rgb = Color3.fromHSV(hue, 1, 1)
-    frame.BorderColor3 = rgb
-    button.TextColor3 = rgb
-end)
-
--- AimLock com travamento total
-local aimEnabled = false
-local lockedTarget = nil
-
-local function getTargetInSight()
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= lp and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local pos, onScreen = camera:WorldToViewportPoint(player.Character.HumanoidRootPart.Position)
-            if onScreen then
-                local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
-                if dist < 100 then
-                    return player.Character.HumanoidRootPart
-                end
-            end
-        end
-    end
-    return nil
-end
-
-RunService.RenderStepped:Connect(function()
-    if aimEnabled then
-        if not lockedTarget then
-            lockedTarget = getTargetInSight()
-        end
-        if lockedTarget then
-            camera.CFrame = CFrame.lookAt(camera.CFrame.Position, lockedTarget.Position)
-        end
-    else
-        lockedTarget = nil
-    end
-end)
-
--- Botão toggle
+-- Função para regenerar vida
 button.MouseButton1Click:Connect(function()
-    aimEnabled = not aimEnabled
-    button.Text = "AIM NOOB [" .. (aimEnabled and "ON" or "OFF") .. "]"
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		humanoid.Health = humanoid.MaxHealth
+	end
+end)
+
+-- Sistema de arrastar o botão
+button.MouseButton1Down:Connect(function(x, y)
+	dragging = true
+	offset = Vector2.new(x, y) - button.AbsolutePosition
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local newPos = input.Position - offset
+		button.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
+	end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
 end)
